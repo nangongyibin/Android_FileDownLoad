@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         File file = new File(getFileName(url) + ".txt");
                         Log.e(TAG, "run: " + file.getPath());
                         Log.e(TAG, "run: " + file.exists());
+
                         if (file.exists() && file.length() > 0) {
                             FileInputStream fileInputStream = new FileInputStream(file);
                             BufferedReader bfr = new BufferedReader(new InputStreamReader(fileInputStream));
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                             con.setRequestProperty("range", "bytes=" + mStartIndex + "-");
                             bfr.close();
                             fileInputStream.close();
+                        } else {
+                            mStartIndex = 0;
                         }
                         int code = con.getResponseCode();
                         Log.e(TAG, "run: " + code);
@@ -124,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
                                     tempFile.close();
                                     break;
                                 }
-                                Log.e(TAG, "run: len=" + len);
                                 raf.write(buf, 0, len);
                                 mCurrentIndex += len;
                                 Log.e(TAG, "run:currentindex= " + mCurrentIndex);
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             is.close();
                             raf.close();
-                            if (mCurrentIndex == mMaxLength) {
+                            if (mMaxLength-mCurrentIndex<1000000){
                                 File deleteFile = new File(getFileName(url) + ".txt");
                                 deleteFile.delete();
                                 runOnUiThread(new Runnable() {
